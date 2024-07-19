@@ -4,18 +4,27 @@ pragma solidity ^0.8.20;
 
 import "./ERC4626Fees.sol";
 
-contract Vault is ERC4626Fees  {
+contract Vault is ERC4626Fees {
     address payable public vaultOwner;
     uint256 public entryFeeBasisPoints;
 
-    constructor(IERC20 _asset, uint256 _basisPoints) ERC4626(_asset) ERC20("Vault Ocean Token", "vOCT"){
+    constructor(
+        IERC20 _asset,
+        uint256 _basisPoints
+    ) ERC4626(_asset) ERC20("Vault Ocean Token", "vOCT") {
         vaultOwner = payable(msg.sender);
         entryFeeBasisPoints = _basisPoints;
     }
 
     /** @dev See {IERC4626-deposit}. */
-    function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
-        require(assets <= maxDeposit(receiver), "ERC4626: deposit more than max");
+    function deposit(
+        uint256 assets,
+        address receiver
+    ) public virtual override returns (uint256) {
+        require(
+            assets <= maxDeposit(receiver),
+            "ERC4626: deposit more than max"
+        );
 
         uint256 shares = previewDeposit(assets);
         _deposit(_msgSender(), receiver, assets, shares);
@@ -29,7 +38,10 @@ contract Vault is ERC4626Fees  {
      * As opposed to {deposit}, minting is allowed even if the vault is in a state where the price of a share is zero.
      * In this case, the shares will be minted without requiring any assets to be deposited.
      */
-    function mint(uint256 shares, address receiver) public virtual override returns (uint256) {
+    function mint(
+        uint256 shares,
+        address receiver
+    ) public virtual override returns (uint256) {
         require(shares <= maxMint(receiver), "ERC4626: mint more than max");
 
         uint256 assets = previewMint(shares);
@@ -40,7 +52,11 @@ contract Vault is ERC4626Fees  {
     }
 
     /** @dev See {IERC4626-redeem}. */
-    function redeem(uint256 shares, address receiver, address owner) public virtual override returns (uint256) {
+    function redeem(
+        uint256 shares,
+        address receiver,
+        address owner
+    ) public virtual override returns (uint256) {
         require(shares <= maxRedeem(owner), "ERC4626: redeem more than max");
 
         uint256 assets = previewRedeem(shares);
@@ -51,8 +67,15 @@ contract Vault is ERC4626Fees  {
     }
 
     /** @dev See {IERC4626-withdraw}. */
-    function withdraw(uint256 assets, address receiver, address owner) public virtual override returns (uint256) {
-        require(assets <= maxWithdraw(owner), "ERC4626: withdraw more than max");
+    function withdraw(
+        uint256 assets,
+        address receiver,
+        address owner
+    ) public virtual override returns (uint256) {
+        require(
+            assets <= maxWithdraw(owner),
+            "ERC4626: withdraw more than max"
+        );
 
         uint256 shares = previewWithdraw(assets);
         beforeWithdraw(assets, shares);
@@ -74,6 +97,6 @@ contract Vault is ERC4626Fees  {
     //////////////////////////////////////////////////////////////*/
 
     function afterDeposit(uint256 assets, uint256 shares) internal virtual {}
-    
+
     function beforeWithdraw(uint256 assets, uint256 shares) internal virtual {}
 }
