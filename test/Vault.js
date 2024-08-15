@@ -14,7 +14,7 @@ describe("Vault", function () {
     const oceanToken = await ethers.deployContract("OceanToken");
 
     const Vault = await ethers.getContractFactory("Vault");
-    const vault = await Vault.deploy(oceanToken, 0);
+    const vault = await Vault.deploy(oceanToken);
 
     return { vault, oceanToken };
   }
