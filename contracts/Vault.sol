@@ -2,18 +2,15 @@
 
 pragma solidity ^0.8.20;
 
-import "./ERC4626Fees.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 
-contract Vault is ERC4626Fees {
+contract Vault is ERC4626 {
     address payable public vaultOwner;
-    uint256 public entryFeeBasisPoints;
 
     constructor(
-        IERC20 _asset,
-        uint256 _basisPoints
+        IERC20 _asset
     ) ERC4626(_asset) ERC20("Vault Ocean Token", "vOCT") {
         vaultOwner = payable(msg.sender);
-        entryFeeBasisPoints = _basisPoints;
     }
 
     /** @dev See {IERC4626-deposit}. */
@@ -82,14 +79,6 @@ contract Vault is ERC4626Fees {
         _withdraw(_msgSender(), receiver, owner, assets, shares);
 
         return shares;
-    }
-
-    function _entryFeeBasisPoints() internal view override returns (uint256) {
-        return entryFeeBasisPoints;
-    }
-
-    function _entryFeeRecipient() internal view override returns (address) {
-        return vaultOwner;
     }
 
     /*//////////////////////////////////////////////////////////////
